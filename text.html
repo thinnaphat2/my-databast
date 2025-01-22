@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      function searchEquipment() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById('equipmentTable');
+        const tr = table.getElementsByTagName('tr');
+        
+        // Loop through all table rows
+        for (let i = 1; i < tr.length; i++) {
+          const td = tr[i].getElementsByTagName('td');
+          let found = false;
+          
+          // Check if any column contains the search query
+          for (let j = 0; j < td.length; j++) {
+            if (td[j]) {
+              const textValue = td[j].textContent || td[j].innerText;
+              if (textValue.toLowerCase().indexOf(filter) > -1) {
+                found = true;
+                break;
+              }
+            }
+          }
+          // Show or hide rows based on search result
+          tr[i].style.display = found ? "" : "none";
+        }
+      }
+
+      function confirmBorrowing() {
+    const table = document.getElementById('equipmentTable');
+    const tr = table.getElementsByTagName('tr');
+    const borrowedItems = JSON.parse(localStorage.getItem('borrowedItems')) || [];
+
+    for (let i = 1; i < tr.length; i++) {
+        const checkbox = tr[i].querySelector('.form-check-input'); // Get the checkbox in each row
+        const statusCell = tr[i].getElementsByTagName('td')[5]; // Get the status cell (column 6)
+
+        if (checkbox.checked) {
+            const image = tr[i].querySelector('td:nth-child(2) img').src; // Get image URL
+            const name = tr[i].getElementsByTagName('td')[2].textContent.trim();
+            const model = tr[i].getElementsByTagName('td')[3].textContent.trim();
+            const registration = tr[i].getElementsByTagName('td')[4].textContent.trim();
+
+            borrowedItems.push({
+                image: image,
+                name: name,
+                model: model,
+                registration: registration,
+                status: 'borrowed' // Indicate it's currently borrowed
+            });
+
+            // Update the status to "ไม่ว่าง" and make it red
+            statusCell.innerHTML = '<button class="btn btn-danger btn-sm">ไม่ว่าง</button>';
+        }
+    }
+
+    localStorage.setItem('borrowedItems', JSON.stringify(borrowedItems)); // Save to localStorage
+    alert('ดำเนินการเสร็จเรียบร้อย');
+}
+
+    </script>
+    <script>
+        window.onload = function() {
+          const borrowedItems = JSON.parse(localStorage.getItem('borrowedItems')) || [];
+          const tableRows = document.querySelectorAll('#equipmentTable tbody tr');
+      
+          tableRows.forEach(row => {
+            const registration = row.querySelector('td:nth-child(5)').textContent.trim();
+            const statusCell = row.querySelector('td:nth-child(6)');
+            const borrowedItem = borrowedItems.find(item => item.registration === registration);
+      
+            if (!borrowedItem || borrowedItem.status === 'available') {
+              statusCell.innerHTML = '<button class="btn btn-success btn-sm">ว่าง</button>';
+            } else {
+              statusCell.innerHTML = '<button class="btn btn-danger btn-sm">ไม่ว่าง</button>';
+            }
+          });
+        };
+      </script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="100" height="75">
+        <a class="navbar-brand" href="#">NBTC4</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">เบิกอุปกรณ์</a></li>
+            <li class="nav-item"><a class="nav-link" href="Return.html">คืนอุปกรณ์</a></li>
+            <li class="nav-item"><a class="nav-link active" aria-current="page" href="beforeandafter.html">ประวัติการเบิก/คืน</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+      <h1 class="text-center">รายการครุภัณฑ์</h1>
+
+      <div class="d-flex justify-content-end my-3">
+        <input type="text" id="searchInput" class="form-control" onkeyup="searchEquipment()" placeholder="ค้นหาอุปกรณ์">
+      </div>
+
+      <table class="table table-striped table-bordered" id="equipmentTable">
+        <thead class="table-light">
+          <tr>
+            <th>ลำดับ</th>
+            <th>รูป</th>
+            <th>ชื่อเครื่องมือ</th>
+            <th>รุ่น</th>
+            <th>หมายเลขทะเบียนครุภัณฑ์</th>
+            <th>สถานะการใช้งาน</th>
+            <th>หมายเหตุ</th>
+            <th>การเบิก</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+            <td>Receiver</td>
+            <td>R&S EK070</td>
+            <td>5821-006-0xx</td>
+            <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+            <td><input class="" type="text" value="" id=""></td>
+            <td><div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                    <label class="form-check-label" for="defaultCheck1">
+                      เบิก
+                    </label>
+                  </div>
+                        </td>
+
+            
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+            <td>Receiver</td>
+            <td>R&S EK070</td>
+            <td>5821-006-0xx</td>
+            <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+            <td><input class="" type="text" value="" id=""></td>
+            <td><div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                    <label class="form-check-label" for="defaultCheck1">
+                      เบิก
+                    </label>
+                  </div>
+                        </td>
+          </tr>
+          
+           
+           <tr>
+             <td>3</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>Receiver</td>
+             <td>ICOM IC-R9500</td>
+             <td>-</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+             <td><input type="text" id="borrowerInput" value=""></td>
+             <td><div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                     <label class="form-check-label" for="defaultCheck1">
+                       เบิก
+                     </label>
+                   </div>
+                         </td>
+           </tr>
+           <tr>
+             <td>4</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>Receiver</td>
+             <td>R&S ESMC</td>
+             <td>5821-006-110</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+             <td><input type="text" id="borrowerInput" value=""></td>
+             <td><div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                     <label class="form-check-label" for="defaultCheck1">
+                       เบิก
+                     </label>
+                   </div>
+                         </td>
+           </tr>
+           <tr>
+             <td>5</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>Receiver</td>
+             <td>R&S ESN</td>
+             <td>6625-001-248</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+                   <td><input type="text" id="borrowerInput" value=""></td>
+                   <td><div class="form-check">
+                           <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                           <label class="form-check-label" for="defaultCheck1">
+                             เบิก
+                           </label>
+                         </div>
+                               </td>
+             
+           </tr>
+           <tr>
+             <td>6</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>Spectrum Analyzer</td>
+             <td>R&S FSW8</td>
+             <td>-</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+             <td><input type="text" id="borrowerInput" value=""></td>
+             <td><div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                     <label class="form-check-label" for="defaultCheck1">
+                       เบิก
+                     </label>
+                   </div>
+                         </td>
+           </tr>
+           <tr> 
+             <td>7</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>Receiver</td>
+             <td>R&S ESMD</td>
+             <td>-</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+                   <td><input type="text" id="borrowerInput" value=""></td>
+                   <td><div class="form-check">
+                           <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                           <label class="form-check-label" for="defaultCheck1">
+                             เบิก
+                           </label>
+                         </div>
+                               </td>
+           </tr>
+           <tr>
+             <td>8</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>Receiver</td>
+             <td>HP 8920A</td>
+             <td>5821-013-012</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+                   <td><input type="text" id="borrowerInput" value=""></td>
+                   <td><div class="form-check">
+                           <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                           <label class="form-check-label" for="defaultCheck1">
+                             เบิก
+                           </label>
+                         </div>
+                               </td>
+           </tr>
+           <tr>
+             <td>9</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>Receiver</td>
+             <td>R&S ESMC</td>
+             <td>5821-006-110</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+             <td><input type="text" id="borrowerInput" value=""></td>
+             <td><div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                     <label class="form-check-label" for="defaultCheck1">
+                       เบิก
+                     </label>
+                   </div>
+                         </td>
+             
+           </tr> 
+           <tr>
+             <td>10</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>ANTENNA</td>
+             <td>R&S/HE101</td>
+             <td>ตฝ.(สข)5821-006-076</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+                   <td><input type="text" id="borrowerInput" value=""></td>
+                   <td><div class="form-check">
+                           <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                           <label class="form-check-label" for="defaultCheck1">
+                             เบิก
+                           </label>
+                         </div>
+                               </td>
+           </tr>
+            <tr>
+             <td>11</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>ANTENNA</td>
+             <td>R&S/HE202</td>
+             <td>บว.(สข)5885-001-018</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+                   <td><input type="text" id="borrowerInput" value=""></td>
+                   <td><div class="form-check">
+                           <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                           <label class="form-check-label" for="defaultCheck1">
+                             เบิก
+                           </label>
+                         </div>
+                               </td>
+           </tr>
+           <tr>
+             <td>12</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>ANTENNA</td>
+             <td>R&S/HE 309</td>
+             <td>ตฝ.(สข)6625-001-248/1</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+                   <td><input type="text" id="borrowerInput" value=""></td>
+                   <td><div class="form-check">
+                           <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                           <label class="form-check-label" for="defaultCheck1">
+                             เบิก
+                           </label>
+                         </div>
+                               </td>
+           </tr>
+           <tr>
+             <td>13</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>ANTENNA</td>
+             <td>R&S/HE 102</td>
+             <td>ตฝ.(สข)6625-001-248/2</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+             <td><input type="text" id="borrowerInput" value=""></td>
+             <td><div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                     <label class="form-check-label" for="defaultCheck1">
+                       เบิก
+                     </label>
+                   </div>
+                         </td>
+             
+           </tr>
+           <tr>
+             <td>14</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>ANTENNA</td>
+             <td>R&S/HE 103</td>
+             <td>บว.(สข)5985-001-015</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+             <td><input type="text" id="borrowerInput" value=""></td>
+             <td><div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                     <label class="form-check-label" for="defaultCheck1">
+                       เบิก
+                     </label>
+                   </div>
+                         </td>
+           </tr>
+           <tr>
+             <td>15</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>ANTENNA</td>
+             <td>R&S/HE 314A1</td>
+             <td>ตฝ.(สข)6625-001-248/3</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+             <td><input type="text" id="borrowerInput" value=""></td>
+             <td><div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                     <label class="form-check-label" for="defaultCheck1">
+                       เบิก
+                     </label>
+                   </div>
+                         </td>
+           </tr>
+           <tr>
+             <td>16</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>ANTENNA</td>
+             <td>R&S/HE 302</td>
+             <td>บว.(สข)5985-001-017</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+                   <td><input type="text" id="borrowerInput" value=""></td>
+                   <td><div class="form-check">
+                           <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                           <label class="form-check-label" for="defaultCheck1">
+                             เบิก
+                           </label>
+                         </div>
+                               </td>
+           </tr>
+           <tr>
+             <td>17</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>ANTENNA</td>
+             <td>R&S/HE 302</td>
+             <td>บว.(สข)5985-001-016</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+             <td><input type="text" id="borrowerInput" value=""></td>
+             <td><div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                     <label class="form-check-label" for="defaultCheck1">
+                       เบิก
+                     </label>
+                   </div>
+                         </td>
+             
+           </tr>
+           <tr>
+             <td>18</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>ANTENNA</td>
+             <td>DISCONE/SKYBAND T601</td>
+             <td>สข.5985-001-184</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+             <td><input type="text" id="borrowerInput" value=""></td>
+             <td><div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                     <label class="form-check-label" for="defaultCheck1">
+                       เบิก
+                     </label>
+                   </div>
+                         </td>
+           </tr>
+           <tr>
+             <td>19</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>ANTENNA</td>
+             <td>R&S/HE 500/.03-3GHz</td>
+             <td>สข.5985-001-191</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+             <td><input type="text" id="borrowerInput" value=""></td>
+             <td><div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                     <label class="form-check-label" for="defaultCheck1">
+                       เบิก
+                     </label>
+                   </div>
+                         </td>
+           </tr>
+           <tr>
+             <td>20</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>ANTENNA</td>
+             <td>VALCOM/V-802</td>
+             <td>ตฝ.(สข)5985-001-166</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+                   <td><input type="text" id="borrowerInput" value=""></td>
+                   <td><div class="form-check">
+                           <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                           <label class="form-check-label" for="defaultCheck1">
+                             เบิก
+                           </label>
+                         </div>
+                               </td>
+           </tr>
+           <tr>
+             <td>21</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>ANTENNA</td>
+             <td>R&S/HK 014</td>
+             <td>ตฝ.(สข)5985-001-160</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+             <td><input type="text" id="borrowerInput" value=""></td>
+             <td><div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                     <label class="form-check-label" for="defaultCheck1">
+                       เบิก
+                     </label>
+                   </div>
+                         </td>
+             
+           </tr>
+           <tr>
+             <td>22</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>ANTENNA</td>
+             <td>R&S/HE 300/.03-6GHz</td>
+             <td>-</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+             <td><input type="text" id="borrowerInput" value=""></td>
+             <td><div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                     <label class="form-check-label" for="defaultCheck1">
+                       เบิก
+                     </label>
+                   </div>
+                         </td>
+           </tr>
+           <tr>
+             <td>23</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>TV MEASUREMENT</td>
+             <td>PROMAX Explorer HD+</td>
+             <td>5821-021-005/56</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+                   <td><input type="text" id="borrowerInput" value=""></td>
+                   <td><div class="form-check">
+                           <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                           <label class="form-check-label" for="defaultCheck1">
+                             เบิก
+                           </label>
+                         </div>
+                               </td>
+           </tr>
+           <tr>
+             <td>24</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>ANTENNA</td>
+             <td>R&S/HL 023A2</td>
+             <td>บว.(สข)5985-001-039</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+                   <td><input type="text" id="borrowerInput" value=""></td>
+                   <td><div class="form-check">
+                           <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                           <label class="form-check-label" for="defaultCheck1">
+                             เบิก
+                           </label>
+                         </div>
+                               </td>
+           </tr>
+           <tr>
+             <td>25</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>ANTENNA</td>
+             <td>R&S/HK 014</td>
+             <td>ตฝ.(สข)5821-001-084</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+             <td><input type="text" id="borrowerInput" value=""></td>
+             <td><div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                     <label class="form-check-label" for="defaultCheck1">
+                       เบิก
+                     </label>
+                   </div>
+                         </td>
+             
+           </tr>
+           <tr>
+             <td>26</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>ANTENNA</td>
+             <td>R&S/HL 023A2</td>
+             <td>บว.(สข)5985-001-085</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+             <td><input type="text" id="borrowerInput" value=""></td>
+             <td><div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                     <label class="form-check-label" for="defaultCheck1">
+                       เบิก
+                     </label>
+                   </div>
+                         </td>
+           </tr>
+           <tr>
+             <td>27</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>ANTENNA</td>
+             <td>R&S/HE 010</td>
+             <td>บว.(สข)5985-001-014</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+             <td><input type="text" id="borrowerInput" value=""></td>
+             <td><div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                     <label class="form-check-label" for="defaultCheck1">
+                       เบิก
+                     </label>
+                   </div>
+                         </td>
+           </tr>
+           <tr>
+             <td>28</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>ANTENNA</td>
+             <td>R&S/HE 300/.03-6GHz</td>
+             <td>5985-001-205</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+                   <td><input type="text" id="borrowerInput" value=""></td>
+                   <td><div class="form-check">
+                           <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                           <label class="form-check-label" for="defaultCheck1">
+                             เบิก
+                           </label>
+                         </div>
+                               </td>
+           </tr>
+           <tr>
+             <td>29</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>AUTOMATIC SPECTRUM RECORDER</td>
+             <td>R&S/ESN</td>
+             <td>ตฝ.(สข)6625-001-248</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+                   <td><input type="text" id="borrowerInput" value=""></td>
+                   <td><div class="form-check">
+                           <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                           <label class="form-check-label" for="defaultCheck1">
+                             เบิก
+                           </label>
+                         </div>
+                               </td>
+             
+           </tr>
+           <tr>
+             <td>30</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>EMF MEASUREMENT</td>
+             <td>R&S/TS-EMF</td>
+             <td>5821-024-004/56</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+                   <td><input type="text" id="borrowerInput" value=""></td>
+                   <td><div class="form-check">
+                           <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                           <label class="form-check-label" for="defaultCheck1">
+                             เบิก
+                           </label>
+                         </div>
+                               </td>
+           </tr>
+           <tr>
+             <td>31</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>MOBILE DF</td>
+             <td>R&S/PA 555/นข 6869 สข.</td>
+             <td>ตฝ.(สข)5821-005-010</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+             <td><input type="text" id="borrowerInput" value=""></td>
+             <td><div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                     <label class="form-check-label" for="defaultCheck1">
+                       เบิก
+                     </label>
+                   </div>
+                         </td>
+           </tr>
+           <tr>
+             <td>32</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>Receiver </td>
+             <td>R&S/EK 895</td>
+             <td>ตฝ.(สข)5821-006-114</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+                   <td><input type="text" id="borrowerInput" value=""></td>
+                   <td><div class="form-check">
+                           <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                           <label class="form-check-label" for="defaultCheck1">
+                             เบิก
+                           </label>
+                         </div>
+                               </td>
+           </tr>
+           <tr>
+             <td>33</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>Receiver</td>
+             <td>R&S/ESM 500A</td>
+             <td>บว.(สข)5821-008-005</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+                   <td><input type="text" id="borrowerInput" value=""></td>
+                   <td><div class="form-check">
+                           <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                           <label class="form-check-label" for="defaultCheck1">
+                             เบิก
+                           </label>
+                         </div>
+                               </td>
+           </tr>
+           <tr>
+             <td>34</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>Receiver</td>
+             <td>R&S/ESM 500A</td>
+             <td>ตฝ.(สข)5821-006-085</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+             <td><input type="text" id="borrowerInput" value=""></td>
+             <td><div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                     <label class="form-check-label" for="defaultCheck1">
+                       เบิก
+                     </label>
+                   </div>
+                         </td>
+           </tr>
+           <tr>
+             <td>35</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>RF COM TESTSET</td>
+             <td>HP 8920A</td>
+             <td>ตฝ.(สข)5821-013-012</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+             <td><input type="text" id="borrowerInput" value=""></td>
+             <td><div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                     <label class="form-check-label" for="defaultCheck1">
+                       เบิก
+                     </label>
+                   </div>
+                         </td>
+           </tr>
+           <tr>
+             <td>36</td>
+             <td><img src="image/logo.png" alt="ข้อความอธิบายภาพ" width="75" height="50"></td>
+             <td>Spectrum Analyzer</td>
+             <td>HP 8594E</td>
+             <td>ตฝ.(สข)5821-021-007/1</td>
+             <td><button class="btn btn-success btn-sm">ว่าง</button></td>
+                   <td><input type="text" id="borrowerInput" value=""></td>
+                   <td><div class="form-check">
+                           <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                           <label class="form-check-label" for="defaultCheck1">
+                             เบิก
+                           </label>
+                         </div>
+                               </td>
+       </tr>
+              
+          
+          
+        </tbody>
+      </table>
+
+      <!-- Confirm Borrowing button placed outside the table -->
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-primary btn-sm" onclick="confirmBorrowing()">ยืนยันการเบิก</button>
+      </div>
+    </div>
+  </body>
+</html>
