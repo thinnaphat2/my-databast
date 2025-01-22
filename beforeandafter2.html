@@ -29,6 +29,7 @@
           <td>${item.registration}</td>
           <td>${item.returnDate} ${item.returnTime}</td>
           <td>${item.borrower}</td> <!-- เพิ่มชื่อผู้เบิกที่นี่ -->
+          <td>${item.remark || 'ไม่มีหมายเหตุ'}</td> <!-- แสดงหมายเหตุ -->
         `;
         tableBody.appendChild(row);
       });
@@ -51,6 +52,7 @@
     'วันที่คืน': item.returnDate,
     'เวลาคืน': item.returnTime,
     'ชื่อผู้เบิก': item.borrower,
+    'หมายเหตุ':item.remark,
   }));
 
   // สร้าง Worksheet และ Workbook
@@ -122,6 +124,7 @@
           <th>หมายเลขทะเบียนครุภัณฑ์</th>
           <th>วันที่และเวลาที่คืน</th>
           <th>ชื่อผู้เบิก</th>
+          <th>หมายเหตุ</th>
         </tr>
       </thead>
       <tbody id="returnedItemsTable">

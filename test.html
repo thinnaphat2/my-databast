@@ -140,6 +140,14 @@
               </div>
             </td>
             <td>
+  <select id="remarkSelect${index}" class="form-select">
+    
+    <option value="เลือก">--เลือก--</option>
+    <option value="ใช้งานได้">ใช้งานได้</option>
+    <option value="ชำรุด">ชำรุด</option>
+  </select>
+</td>
+            <td>
               <button class="btn btn-danger btn-sm" onclick="removeEquipment(${index})">ลบ</button>
             </td>
           `;
@@ -197,8 +205,10 @@
   for (let i = 1; i < tr.length; i++) {
     const checkbox = tr[i].querySelector('.form-check-input');
     const statusCell = tr[i].getElementsByTagName('td')[5];
-    const borrowerSelect = tr[i].querySelector(`#borrowerSelect${i - 1}`); // Adjust index to match row
+    const borrowerSelect = tr[i].querySelector(`#borrowerSelect${i - 1}`); // ปรับ index ให้ตรงกับแถว
     const borrower = borrowerSelect ? borrowerSelect.value.trim() : '';
+    const remarkSelect = tr[i].querySelector(`#remarkSelect${i - 1}`); // ดึงค่าหมายเหตุ
+    const remark = remarkSelect ? remarkSelect.value : 'ใช้งานได้'; // ค่าเริ่มต้นเป็น "ใช้งานได้"
 
     if (checkbox.checked) {
       // ตรวจสอบว่ามีการเลือกชื่อผู้เบิกหรือไม่
@@ -218,6 +228,7 @@
         model: model,
         registration: registration,
         borrower: borrower,
+        remark: remark, // บันทึกข้อมูลหมายเหตุ
         date: date,
         time: time,
         status: 'borrowed',
@@ -236,6 +247,7 @@
   localStorage.setItem('allBorrowedHistory', JSON.stringify(allBorrowedHistory));
   alert('ดำเนินการเสร็จเรียบร้อย');
 }
+
 
       function searchEquipment() {
         const input = document.getElementById('searchInput');
@@ -313,6 +325,7 @@
             <th>สถานะการใช้งาน</th>
             <th>ชื่อผู้เบิก</th>
             <th>การเบิก</th>
+            <th>หมายเหตุ</th>
             <th>ลบรายการ</th>
           </tr>
         </thead>
