@@ -30,6 +30,7 @@
           <td>${item.returnDate} ${item.returnTime}</td>
           <td>${item.borrower}</td> <!-- เพิ่มชื่อผู้เบิกที่นี่ -->
           <td>${item.remark || 'ไม่มีหมายเหตุ'}</td> <!-- แสดงหมายเหตุ -->
+           <td>${item.receiver || '-'}</td>
         `;
         tableBody.appendChild(row);
       });
@@ -53,6 +54,7 @@
     'เวลาคืน': item.returnTime,
     'ชื่อผู้เบิก': item.borrower,
     'หมายเหตุ':item.remark,
+    'ผู้รับคืน':item.receiver,
   }));
 
   // สร้าง Worksheet และ Workbook
@@ -125,6 +127,7 @@
           <th>วันที่และเวลาที่คืน</th>
           <th>ชื่อผู้เบิก</th>
           <th>หมายเหตุ</th>
+          <th>ผู้รับคืน</th>
         </tr>
       </thead>
       <tbody id="returnedItemsTable">

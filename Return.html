@@ -27,6 +27,13 @@
           <td>
             <textarea class="form-control" id="remark${index}" rows="1" placeholder="พิมพ์หมายเหตุ...">${item.remark || ''}</textarea>
           </td>
+          <td>
+            <select class="form-select form-select-sm" id="receiver${index}">
+              <option value="" selected>เลือกผู้รับคืน</option>
+              <option value="มาร์ค">มาร์ค</option>
+              <option value="เบนซ์">เบนซ์</option>
+            </select>
+          </td>
         `;
         tableBody.appendChild(row);
       });
@@ -45,6 +52,14 @@
         returnedItem.returnDate = new Date().toLocaleDateString(); // เพิ่มวันที่คืน
         returnedItem.returnTime = new Date().toLocaleTimeString(); // เพิ่มเวลาคืน
         returnedItem.remark = document.getElementById(`remark${index}`).value; // ดึงหมายเหตุจากช่องกรอกข้อความ
+        returnedItem.receiver = document.getElementById(`receiver${index}`).value; // ดึงชื่อผู้รับคืน
+
+        // ตรวจสอบว่ามีการเลือกผู้รับคืนหรือยัง
+        if (!returnedItem.receiver) {
+          alert('กรุณาเลือกผู้รับคืนสำหรับอุปกรณ์ที่เลือก');
+          return;
+        }
+
         returnedItems.push(returnedItem); // เพิ่มลงในรายการการคืน
       });
 
@@ -98,7 +113,8 @@
           <th>หมายเลขทะเบียนครุภัณฑ์</th>
           <th>ชื่อผู้เบิก</th>
           <th>คืน</th>
-          <th>หมายเหตุ</th> <!-- เพิ่มช่องหมายเหตุ -->
+          <th>หมายเหตุ</th>
+          <th>ผู้รับคืน</th> <!-- เพิ่มช่องผู้รับคืน -->
         </tr>
       </thead>
       <tbody id="borrowedItemsTable">
