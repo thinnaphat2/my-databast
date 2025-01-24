@@ -140,12 +140,7 @@
               </div>
             </td>
             <td>
-  <select id="remarkSelect${index}" class="form-select">
-    
-    <option value="เลือก">--เลือก--</option>
-    <option value="ใช้งานได้">ใช้งานได้</option>
-    <option value="ชำรุด">ชำรุด</option>
-  </select>
+  <input type="text" id="remarkInput${index}" class="form-control" placeholder="ใส่หมายเหตุ" ${isBorrowed ? 'disabled' : ''}>
 </td>
             <td>
               <button class="btn btn-danger btn-sm" onclick="removeEquipment(${index})">ลบ</button>
@@ -207,8 +202,8 @@
     const statusCell = tr[i].getElementsByTagName('td')[5];
     const borrowerSelect = tr[i].querySelector(`#borrowerSelect${i - 1}`); // ปรับ index ให้ตรงกับแถว
     const borrower = borrowerSelect ? borrowerSelect.value.trim() : '';
-    const remarkSelect = tr[i].querySelector(`#remarkSelect${i - 1}`); // ดึงค่าหมายเหตุ
-    const remark = remarkSelect ? remarkSelect.value : 'ใช้งานได้'; // ค่าเริ่มต้นเป็น "ใช้งานได้"
+    const remarkInput = tr[i].querySelector(`#remarkInput${i - 1}`);
+const remark = remarkInput ? remarkInput.value.trim() : 'ใช้งานได้';
 
     if (checkbox.checked) {
       // ตรวจสอบว่ามีการเลือกชื่อผู้เบิกหรือไม่
