@@ -41,39 +41,47 @@
     };
 
     // Function to handle returning items
-    function handleReturnItems() {
-      let borrowedItems = JSON.parse(localStorage.getItem('borrowedItems')) || [];
-      let returnedItems = JSON.parse(localStorage.getItem('returnedItems')) || []; // โหลดข้อมูลการคืน
+    fu// Function to handle returning items
+function handleReturnItems() {
+  let borrowedItems = JSON.parse(localStorage.getItem('borrowedItems')) || [];
+  let returnedItems = JSON.parse(localStorage.getItem('returnedItems')) || []; // โหลดข้อมูลการคืน
 
-      const checkboxes = document.querySelectorAll('.return-checkbox:checked');
+  const checkboxes = document.querySelectorAll('.return-checkbox:checked');
+  let canReturn = true; // Flag for whether the return process can proceed
 
-      checkboxes.forEach(checkbox => {
-        const index = checkbox.getAttribute('data-index');
-        const returnedItem = borrowedItems[index]; // ดึงข้อมูลอุปกรณ์ที่คืน
-        returnedItem.returnDate = new Date().toLocaleDateString(); // เพิ่มวันที่คืน
-        returnedItem.returnTime = new Date().toLocaleTimeString(); // เพิ่มเวลาคืน
-        returnedItem.remark = document.getElementById(`remark${index}`).value; // ดึงหมายเหตุจากช่องกรอกข้อความ
-        returnedItem.receiver = document.getElementById(`receiver${index}`).value; // ดึงชื่อผู้รับคืน
+  checkboxes.forEach(checkbox => {
+    const index = checkbox.getAttribute('data-index');
+    const returnedItem = borrowedItems[index]; // ดึงข้อมูลอุปกรณ์ที่คืน
+    returnedItem.returnDate = new Date().toLocaleDateString(); // เพิ่มวันที่คืน
+    returnedItem.returnTime = new Date().toLocaleTimeString(); // เพิ่มเวลาคืน
+    returnedItem.remark = document.getElementById(`remark${index}`).value; // ดึงหมายเหตุจากช่องกรอกข้อความ
+    returnedItem.receiver = document.getElementById(`receiver${index}`).value; // ดึงชื่อผู้รับคืน
 
-        // ตรวจสอบว่ามีการเลือกผู้รับคืนหรือยัง
-        if (!returnedItem.receiver) {
-          alert('กรุณาเลือกผู้รับคืนสำหรับอุปกรณ์ที่เลือก');
-          return;
-        }
-
-        returnedItems.push(returnedItem); // เพิ่มลงในรายการการคืน
-      });
-
-      // ลบรายการที่คืนออกจาก borrowedItems
-      borrowedItems = borrowedItems.filter((_, index) => ![...checkboxes].some(checkbox => checkbox.getAttribute('data-index') == index));
-      
-      // บันทึกข้อมูลกลับใน Local Storage
-      localStorage.setItem('borrowedItems', JSON.stringify(borrowedItems));
-      localStorage.setItem('returnedItems', JSON.stringify(returnedItems)); // บันทึกข้อมูลการคืน
-
-      alert('คืนอุปกรณ์สำเร็จ');
-      window.location.reload(); // Refresh เพื่อแสดงข้อมูลล่าสุด
+    // ตรวจสอบว่ามีการเลือกผู้รับคืนหรือยัง
+    if (!returnedItem.receiver) {
+      alert('กรุณาเลือกผู้รับคืนสำหรับอุปกรณ์ที่เลือก');
+      canReturn = false; // ถ้ายังไม่เลือกผู้รับคืน จะไม่สามารถคืนได้
+      return; // หยุดการทำงานหากไม่เลือกผู้รับคืน
     }
+
+    returnedItems.push(returnedItem); // เพิ่มลงในรายการการคืน
+  });
+
+  if (!canReturn) {
+    return; // ถ้าไม่สามารถคืนได้ จะหยุดการทำงานของฟังก์ชัน
+  }
+
+  // ลบรายการที่คืนออกจาก borrowedItems
+  borrowedItems = borrowedItems.filter((_, index) => ![...checkboxes].some(checkbox => checkbox.getAttribute('data-index') == index));
+
+  // บันทึกข้อมูลกลับใน Local Storage
+  localStorage.setItem('borrowedItems', JSON.stringify(borrowedItems));
+  localStorage.setItem('returnedItems', JSON.stringify(returnedItems)); // บันทึกข้อมูลการคืน
+
+  alert('คืนอุปกรณ์สำเร็จ');
+  window.location.reload(); // Refresh เพื่อแสดงข้อมูลล่าสุด
+}
+
   </script>
 </head>
 <body>
