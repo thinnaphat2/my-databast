@@ -29,6 +29,7 @@
       <td>${item.registration}</td>
       <td>${item.date} ${item.time}</td>
       <td>${item.borrower}</td> <!-- เพิ่มชื่อผู้เบิกที่นี่ -->
+      <td>${item.remark}</td> <!-- แสดงหมายเหตุที่นี่ -->
     `;
     historyTableBody.appendChild(row);
   });
@@ -51,6 +52,7 @@ function exportToExcel() {
     'วันที่เบิก': item.date,
     'เวลาเบิก': item.time,
     'ชื่อผู้เบิก': item.borrower,
+    'หมายเหตุ':item.remark,
   }));
 
   // สร้าง Worksheet และ Workbook
@@ -125,6 +127,7 @@ function clearHistory() {
           <th>หมายเลขทะเบียน</th>
           <th>วันที่เบิก</th>
           <th>ชื่อผู้เบิก</th>
+          <th>หมายเหตุ</th>
         </tr>
       </thead>
       <tbody id="historyTableBody">

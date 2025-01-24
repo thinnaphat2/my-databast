@@ -18,11 +18,21 @@
           <td>${item.name}</td>
           <td>${item.model}</td>
           <td>${item.registration}</td>
-             <td>${item.borrower}</td>
+          <td>${item.borrower}</td>
           <td>
             <div class="form-check">
               <input class="form-check-input return-checkbox" type="checkbox" data-index="${index}">
             </div>
+          </td>
+          <td>
+            <textarea class="form-control" id="remark${index}" rows="1" placeholder="พิมพ์หมายเหตุ...">${item.remark || ''}</textarea>
+          </td>
+          <td>
+            <select class="form-select form-select-sm" id="receiver${index}">
+              <option value="" selected>เลือกผู้รับคืน</option>
+              <option value="มาร์ค">มาร์ค</option>
+              <option value="เบนซ์">เบนซ์</option>
+            </select>
           </td>
         `;
         tableBody.appendChild(row);
@@ -31,30 +41,38 @@
 
     // Function to handle returning items
     function handleReturnItems() {
-  let borrowedItems = JSON.parse(localStorage.getItem('borrowedItems')) || [];
-  let returnedItems = JSON.parse(localStorage.getItem('returnedItems')) || []; // โหลดข้อมูลการคืน
+      let borrowedItems = JSON.parse(localStorage.getItem('borrowedItems')) || [];
+      let returnedItems = JSON.parse(localStorage.getItem('returnedItems')) || []; // โหลดข้อมูลการคืน
 
-  const checkboxes = document.querySelectorAll('.return-checkbox:checked');
+      const checkboxes = document.querySelectorAll('.return-checkbox:checked');
 
-  checkboxes.forEach(checkbox => {
-    const index = checkbox.getAttribute('data-index');
-    const returnedItem = borrowedItems[index]; // ดึงข้อมูลอุปกรณ์ที่คืน
-    returnedItem.returnDate = new Date().toLocaleDateString(); // เพิ่มวันที่คืน
-    returnedItem.returnTime = new Date().toLocaleTimeString(); // เพิ่มเวลาคืน
-    returnedItems.push(returnedItem); // เพิ่มลงในรายการการคืน
-  });
+      checkboxes.forEach(checkbox => {
+        const index = checkbox.getAttribute('data-index');
+        const returnedItem = borrowedItems[index]; // ดึงข้อมูลอุปกรณ์ที่คืน
+        returnedItem.returnDate = new Date().toLocaleDateString(); // เพิ่มวันที่คืน
+        returnedItem.returnTime = new Date().toLocaleTimeString(); // เพิ่มเวลาคืน
+        returnedItem.remark = document.getElementById(`remark${index}`).value; // ดึงหมายเหตุจากช่องกรอกข้อความ
+        returnedItem.receiver = document.getElementById(`receiver${index}`).value; // ดึงชื่อผู้รับคืน
 
-  // ลบรายการที่คืนออกจาก borrowedItems
-  borrowedItems = borrowedItems.filter((_, index) => ![...checkboxes].some(checkbox => checkbox.getAttribute('data-index') == index));
-  
-  // บันทึกข้อมูลกลับใน Local Storage
-  localStorage.setItem('borrowedItems', JSON.stringify(borrowedItems));
-  localStorage.setItem('returnedItems', JSON.stringify(returnedItems)); // บันทึกข้อมูลการคืน
+        // ตรวจสอบว่ามีการเลือกผู้รับคืนหรือยัง
+        if (!returnedItem.receiver) {
+          alert('กรุณาเลือกผู้รับคืนสำหรับอุปกรณ์ที่เลือก');
+          return;
+        }
 
-  alert('คืนอุปกรณ์สำเร็จ');
-  window.location.reload(); // Refresh เพื่อแสดงข้อมูลล่าสุด
-}
+        returnedItems.push(returnedItem); // เพิ่มลงในรายการการคืน
+      });
 
+      // ลบรายการที่คืนออกจาก borrowedItems
+      borrowedItems = borrowedItems.filter((_, index) => ![...checkboxes].some(checkbox => checkbox.getAttribute('data-index') == index));
+      
+      // บันทึกข้อมูลกลับใน Local Storage
+      localStorage.setItem('borrowedItems', JSON.stringify(borrowedItems));
+      localStorage.setItem('returnedItems', JSON.stringify(returnedItems)); // บันทึกข้อมูลการคืน
+
+      alert('คืนอุปกรณ์สำเร็จ');
+      window.location.reload(); // Refresh เพื่อแสดงข้อมูลล่าสุด
+    }
   </script>
 </head>
 <body>
@@ -74,12 +92,10 @@
               ประวัติ
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              
-              <li><a class="dropdown-item" href="beforeandafter.html">ประวัติการเบิก</a></li> <!-- เพิ่มเมนูประวัติการคืน -->
-              <li><a class="dropdown-item" href="beforeandafter.html">ประวัติการคืน</a></li> <!-- เพิ่มเมนูประวัติการคืน -->
+              <li><a class="dropdown-item" href="beforeandafter.html">ประวัติการเบิก</a></li> 
+              <li><a class="dropdown-item" href="beforeandafter.html">ประวัติการคืน</a></li> 
             </ul>
           </li>
-        
         </ul>
       </div>
     </div>
@@ -97,6 +113,8 @@
           <th>หมายเลขทะเบียนครุภัณฑ์</th>
           <th>ชื่อผู้เบิก</th>
           <th>คืน</th>
+          <th>หมายเหตุ</th>
+          <th>ผู้รับคืน</th> <!-- เพิ่มช่องผู้รับคืน -->
         </tr>
       </thead>
       <tbody id="borrowedItemsTable">
